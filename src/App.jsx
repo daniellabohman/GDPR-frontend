@@ -4,7 +4,10 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
+import Profile from "./pages/Profile";
 import PrivateRoute from "./components/PrivateRoute";
+import Analyser from "./pages/Analyser";
+
 
 const App = () => {
   return (
@@ -28,6 +31,24 @@ const App = () => {
           element={
             <PrivateRoute>
               <Dashboard />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/profile"
+          element={
+            <PrivateRoute>
+              <Profile />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/analyser"
+          element={
+            <PrivateRoute>
+              <Analyser />
             </PrivateRoute>
           }
         />

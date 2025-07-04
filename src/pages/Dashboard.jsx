@@ -1,7 +1,24 @@
 import React, { useEffect, useState } from "react";
 import axios from "../utils/axiosInstance";
-import { useNavigate } from "react-router-dom";
 import Layout from "../components/Layout";
+import { useNavigate } from "react-router-dom";
+import HistoryList from "../components/HistoryList";
+import AnalysisResult from "../components/AnalysisResult";
+import "../styles/global.css";
+
+const ScoreBadge = ({ score }) => {
+  const getColorClass = () => {
+    if (score >= 90) return "score-good";
+    if (score >= 70) return "score-medium";
+    return "score-bad";
+  };
+
+  const label = score >= 90 ? "God" : score >= 70 ? "OK" : "Lav";
+
+  return (
+    <span className={`score-badge ${getColorClass()}`}>{label}</span>
+  );
+};
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
@@ -10,25 +27,13 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const logout = async () => {
-    try {
-      await axios.post("http://localhost:5000/api/auth/logout", {}, {
-        withCredentials: true
-      });
-    } catch (err) {
-      console.error("Logout-fejl", err);
-    }
-    localStorage.removeItem("token");
-    navigate("/");
-  };
-
   useEffect(() => {
     const fetchMe = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/auth/me");
+        const res = await axios.get("/auth/me");
         setUser(res.data);
       } catch (err) {
-        navigate("/");
+        navigate("/login");
       }
     };
     fetchMe();
@@ -38,7 +43,7 @@ const Dashboard = () => {
     if (!url) return alert("Indtast en URL");
     setLoading(true);
     try {
-      const res = await axios.post("http://localhost:5000/api/gdpr/analyze", { url });
+      const res = await axios.post("/gdpr/analyze", { url });
       setAnalysis(res.data);
     } catch (err) {
       alert("Analyse fejlede");
@@ -51,84 +56,27 @@ const Dashboard = () => {
 
   return (
     <Layout>
-      <div style={{ maxWidth: "800px", margin: "0 auto" }}>
-        <h2>Hej, {user.company}</h2>
-        <p>Du er logget ind som: {user.email}</p>
-
-        <div style={{
-          marginTop: "2rem",
-          background: "#fff",
-          padding: "1.5rem",
-          borderRadius: "12px",
-          boxShadow: "0 4px 12px rgba(0,0,0,0.1)"
-        }}>
-          <h3>GDPR-analyse</h3>
-          <input
-            type="text"
-            placeholder="Indtast din hjemmeside-URL"
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-            style={{
-              padding: "12px",
-              width: "70%",
-              maxWidth: "400px",
-              borderRadius: "6px",
-              border: "1px solid #ccc"
-            }}
-          />
-          <button
-            onClick={handleAnalyze}
-            style={{
-              marginLeft: "10px",
-              padding: "12px 24px",
-              backgroundColor: "#3e3e3e",
-              color: "white",
-              border: "none",
-              borderRadius: "6px",
-              cursor: "pointer"
-            }}
-          >
-            {loading ? "Analyserer..." : "Analyser"}
-          </button>
-
-          {analysis && (
-            <div style={{
-              marginTop: "2rem",
-              background: "#f3f3f3",
-              padding: "1.5rem",
-              borderRadius: "12px",
-              borderLeft: "6px solid #8a7e72"
-            }}>
-              <h4>Compliance Score: {analysis.score}%</h4>
-              {analysis.missing?.length > 0 ? (
-                <p><strong>Mangler:</strong> {analysis.missing.join(", ")}</p>
-              ) : (
-                <p><strong>Mangler:</strong> Ingen større problemer fundet 🎉</p>
-              )}
-              <p><strong>Forslag:</strong></p>
-              <ul>
-                {analysis.suggestions?.map((s, i) => (
-                  <li key={i}>{s}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
-
-        <button
-          onClick={logout}
-          style={{
-            marginTop: "3rem",
-            padding: "10px 20px",
-            backgroundColor: "#8a7e72",
-            color: "#fff",
-            border: "none",
-            borderRadius: "6px",
-            cursor: "pointer"
-          }}
-        >
-          Log ud
+      {/* GDPR-analyse input som card */}
+      <div className="card">
+        <h3>Udfør GDPR-analyse</h3>
+        <input
+          type="text"
+          placeholder="Indtast din hjemmeside-URL"
+          value={url}
+          onChange={(e) => setUrl(e.target.value)}
+        />
+        <button onClick={handleAnalyze} disabled={loading}>
+          {loading ? "Analyserer..." : "Analyser"}
         </button>
+      </div>
+
+      <div className="analysis-layout">
+        {analysis && (
+          <AnalysisResult analysis={analysis} withTitle />
+        )}
+
+        {/* Tidligere analyser vises altid, også hvis tom */}
+        <HistoryList ScoreBadge={ScoreBadge} withTitle />
       </div>
     </Layout>
   );

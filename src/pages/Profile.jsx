@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "../utils/axiosInstance";
+import Layout from "../components/Layout";
 
 const Profile = () => {
   const [user, setUser] = useState(null);
@@ -8,44 +9,41 @@ const Profile = () => {
 
   const logout = async () => {
     try {
-        await axios.post("http://localhost:5000/api/auth/logout", {}, {
+      await axios.post("/auth/logout", {}, {
         withCredentials: true
-        });
+      });
     } catch (e) {
-        console.warn("Logout failed on server");
+      console.warn("Logout failed on server");
     } finally {
-        localStorage.removeItem("token");
-        navigate("/");
+      localStorage.removeItem("token");
+      navigate("/login");
     }
-    };
-
+  };
 
   useEffect(() => {
     const fetchMe = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/auth/me", {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`
-          }
-        });
+        const res = await axios.get("/auth/me");
         setUser(res.data);
       } catch (err) {
-        alert("Unauthorized");
         logout();
       }
     };
     fetchMe();
-  }, []);
+  }, []); // <-- afhænger ikke af navigate
 
-  if (!user) return <p>Loading...</p>;
+  if (!user) return <p>Indlæser profil...</p>;
 
   return (
-    <div>
-      <h2>Welcome, {user.company}</h2>
-      <p>Email: {user.email}</p>
-      <p>Role: {user.role}</p>
-      <button onClick={logout}>Logout</button>
-    </div>
+    <Layout>
+      <div className="card">
+        <h2>Min profil</h2>
+        <p><strong>Virksomhed:</strong> {user.company}</p>
+        <p><strong>Email:</strong> {user.email}</p>
+        <p><strong>Rolle:</strong> {user.role}</p>
+        <button onClick={logout} style={{ marginTop: "1rem" }}>Log ud</button>
+      </div>
+    </Layout>
   );
 };
 

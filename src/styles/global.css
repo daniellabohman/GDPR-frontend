@@ -1,0 +1,189 @@
+/* ====== RESET ====== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f5f2ef;
+  color: #333;
+  line-height: 1.6;
+}
+
+/* ====== VARIABLER ====== */
+:root {
+  --header-height: 72px;
+  --sidebar-width: 200px;
+}
+
+/* ====== HEADER ====== */
+header {
+  height: var(--header-height);
+  background-color: #dcd3c3;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2rem;
+  border-bottom: 1px solid #ccc;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 10;
+}
+
+/* ====== SIDEBAR ====== */
+.sidebar {
+  width: var(--sidebar-width);
+  background-color: #8a7e72;
+  color: white;
+  padding: 2rem 1rem;
+  position: fixed;
+  top: var(--header-height);
+  left: 0;
+  height: calc(100vh - var(--header-height));
+  overflow-y: auto;
+}
+
+.sidebar ul li {
+  margin-bottom: 1rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 6px;
+  transition: background 0.2s ease;
+}
+
+.sidebar ul li:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+/* ====== MAIN ====== */
+.dashboard {
+  margin-left: var(--sidebar-width);
+  padding: 2rem;
+  margin-top: var(--header-height);
+}
+
+/* ====== CONTAINER & CARD ====== */
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.card {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1);
+}
+
+/* ====== FORM & KNAPPER ====== */
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  padding: 10px;
+  width: 100%;
+  max-width: 400px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+button {
+  background-color: #7e6e5c;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+button:hover {
+  background-color: #5c4e42;
+}
+
+/* ====== LINKS ====== */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* ====== ANALYSEVISNING ====== */
+.analysis-layout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-top: 2rem;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+/* ====== HISTORY GRID ====== */
+.history-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.timestamp {
+  font-size: 0.85rem;
+  color: #888;
+  margin-bottom: 0.5rem;
+}
+
+/* ====== SCORE BADGE ====== */
+.score-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 9999px;
+  font-weight: bold;
+  font-size: clamp(0.7rem, 1vw, 0.85rem);
+  margin-left: 0.5rem;
+  color: #fff;
+}
+
+.score-good {
+  background-color: #4caf50;
+}
+
+.score-medium {
+  background-color: #ff9800;
+}
+
+.score-bad {
+  background-color: #f44336;
+}
+
+/* ====== RESPONSIV ====== */
+@media (max-width: 768px) {
+  .sidebar {
+    position: relative;
+    width: 100%;
+    height: auto;
+  }
+
+  .dashboard {
+    margin-left: 0;
+    padding: 1rem;
+    margin-top: var(--header-height);
+  }
+
+  .analysis-layout {
+    flex-direction: column;
+  }
+
+  .card,
+  .history-grid > div {
+    width: 100%;
+  }
+}
