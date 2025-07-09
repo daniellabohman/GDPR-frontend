@@ -7,6 +7,7 @@ import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import PrivateRoute from "./components/PrivateRoute";
 import Analyser from "./pages/Analyser";
+import PrivacyPolicyPage from "./pages/PrivacyPolicy";
 
 
 const App = () => {
@@ -52,6 +53,9 @@ const App = () => {
             </PrivateRoute>
           }
         />
+        <Route path="/privatlivspolitik" element={<PrivacyPolicyPage />} />
+
+
 
         {/* Catch-all til 404 eller redirect */}
         <Route path="*" element={<Navigate to="/dashboard" />} />

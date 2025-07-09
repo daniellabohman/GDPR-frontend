@@ -1,8 +1,7 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import logo from "../assets/logo-light.png"; 
+import logo from "../assets/logo-light.png";
 import "../styles/global.css";
-import Sidebar from "./Sidebar"; 
 
 const Layout = ({ children }) => {
   const navigate = useNavigate();
@@ -14,68 +13,35 @@ const Layout = ({ children }) => {
 
   return (
     <div>
-      {/* Header */}
-      <header
-        style={{
-          backgroundColor: "#f4f1ee",
-          padding: "1rem 2rem",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          boxShadow: "0 2px 6px rgba(0,0,0,0.05)",
-          position: "fixed",
-          top: 0,
-          width: "100%",
-          zIndex: 1000
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: "1.5rem" }}>
-          <img
-            src={logo}
-            alt="GDPR logo"
-            style={{
-              height: "60px",
-              cursor: "pointer",
-              transition: "transform 0.2s"
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
-            onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
-          />
-          <h1 style={{ fontSize: "1.2rem", color: "#3e3e3e" }}>
-            GDPR gjort lettere
-          </h1>
+      {/* Header navigation */}
+      <header className="header-bar">
+        <div className="nav-left">
+          <Link to="/dashboard">
+            <img src={logo} alt="GDPR logo" className="nav-logo" />
+          </Link>
+          <h1 className="nav-title">GDPR gjort lettere</h1>
         </div>
 
-        <button
-          onClick={handleLogout}
-          style={{
-            backgroundColor: "#8a7e72",
-            border: "none",
-            color: "#fff",
-            padding: "10px 20px",
-            borderRadius: "6px",
-            fontSize: "0.95rem",
-            cursor: "pointer",
-            transition: "background 0.2s"
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.background = "#6d6157")}
-          onMouseLeave={(e) => (e.currentTarget.style.background = "#8a7e72")}
-        >
-          Log ud
-        </button>
+        <nav className="nav-right">
+          <div className="dropdown">
+            <button className="dropbtn">Menu ▾</button>
+            <div className="dropdown-content">
+              <Link to="/dashboard">Analyse</Link>
+              <Link to="/privatlivspolitik">Dokumenter</Link>
+              <Link to="/profile">Min profil</Link>
+            </div>
+          </div>
+          <button className="logout-btn" onClick={handleLogout}>
+            Log ud
+          </button>
+        </nav>
       </header>
 
-
-      {/* Sidebar + Main content */}
-      {/* Sidebar + Main content */}
-      <div style={{ display: "flex" }}>
-        <Sidebar />
-        <main className="dashboard">
-          <div className="container">
-            {children}
-          </div>
-        </main>
-      </div>
+      <main className="dashboard">
+        <div className="container">
+          {children}
+        </div>
+      </main>
     </div>
   );
 };
