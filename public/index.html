@@ -1,11 +1,40 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GDPR Platform</title>
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
-</html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nexpertia – GDPR-værktøjer og analyser</title>
+
+  <meta name="description" content="Effektive GDPR-analyser, automatisk privatlivspolitik, skabeloner og blogviden – alt samlet ét sted." />
+  <meta name="keywords" content="GDPR, privatlivspolitik, cookiepolitik, databehandleraftale, Nexpertia" />
+  <meta name="author" content="Nexpertia" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Nexpertia – GDPR Platform" />
+  <meta property="og:description" content="Alt du behøver til GDPR: analyser, politikker og skabeloner." />
+  <meta property="og:url" content="https://nexpertia.dk/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Nexpertia" />
+  <!-- Tilføj hvis du har billede -->
+  <!-- <meta property="og:image" content="https://nexpertia.dk/cover.jpg" /> -->
+
+  <!-- Sitemap -->
+  <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />
+</head>
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
+
+  <!-- Google Tag Manager -->
+  <script>
+    (function(w, d, s, l, i) {
+      w[l] = w[l] || [];
+      w[l].push({'gtm.start':
+        new Date().getTime(), event: 'gtm.js'});
+      var f = d.getElementsByTagName(s)[0],
+          j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : '';
+      j.async = true;
+      j.src =
+        'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+      f.parentNode.insertBefore(j, f);
+    })(window, document, 'script', 'dataLayer', 'GTM-XXXXXX');
+  </script>
+  <!-- End Google Tag Manager -->
