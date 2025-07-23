@@ -1,24 +1,23 @@
 import React, { useEffect, useState } from "react";
 import axios from "../utils/axiosInstance";
 import Layout from "../components/Layout";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import AnalysisResult from "../components/AnalysisResult";
-import "../styles/global.css";
-import { Link } from "react-router-dom";
-
 import {
   SearchCheck,
   FileText,
   Zap,
   ShieldCheck,
+  AlertCircle
 } from "lucide-react";
-
+import "../styles/global.css";
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
   const [url, setUrl] = useState("");
   const [analysis, setAnalysis] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [averageScore, setAverageScore] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -32,6 +31,24 @@ const Dashboard = () => {
     };
     fetchMe();
   }, [navigate]);
+
+  useEffect(() => {
+    const fetchAverageScore = async () => {
+      try {
+        const res = await axios.get("/me/average-score");
+        setAverageScore(res.data.average_score);
+      } catch (err) {
+        console.error("Kunne ikke hente compliance score");
+      }
+    };
+    fetchAverageScore();
+  }, []);
+
+  const getScoreClass = (score) => {
+    if (score >= 90) return "score-good";
+    if (score >= 70) return "score-medium";
+    return "score-bad";
+  };
 
   const handleAnalyze = async () => {
     if (!url) return alert("Indtast en URL");
@@ -50,111 +67,115 @@ const Dashboard = () => {
 
   return (
     <Layout>
-      {/* Hero-sektion / intro */}
+
+      {/* Compliance score */}
+      {averageScore !== null && (
+        <div className="card" style={{ marginBottom: "2rem", textAlign: "center" }}>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "1rem" }}>
+            <ShieldCheck size={32} color="#2563EB" />
+            <div style={{ fontSize: "1.1rem", fontWeight: 600 }}>
+              Din gennemsnitlige compliance score
+            </div>
+            <span className={`score-badge ${getScoreClass(averageScore)}`}>
+              {averageScore}%
+            </span>
+          </div>
+          <div style={{ textAlign: "center", marginTop: "1rem" }}>
+            <Link
+              to="/analyser"
+              className="cta-link"
+              style={{
+                backgroundColor: "#2563EB",
+                color: "#fff",
+                padding: "10px 16px",
+                borderRadius: "8px",
+                fontWeight: 500,
+                display: "inline-block",
+                textDecoration: "none"
+              }}
+            >
+              Forbedr din score →
+            </Link>
+          </div>
+        </div>
+      )}
+
+      {/* Hero / intro */}
       <div className="card" style={{ textAlign: "center", padding: "2.5rem" }}>
         <h1 style={{ fontSize: "2rem", marginBottom: "1rem" }}>
           Gør din hjemmeside GDPR-kompatibel
         </h1>
         <p style={{ maxWidth: "700px", margin: "0 auto", fontSize: "1.1rem", color: "#555" }}>
-          Nexpertia hjælper dig med hurtigt at analysere din hjemmeside for overtrædelser af persondataforordningen. 
-          Du får konkrete anbefalinger, bedre compliance og ro i maven – alt sammen med ét klik.
+          Nexpertia hjælper dig med at analysere din hjemmeside og identificere overtrædelser af GDPR – hurtigt og nemt.
         </p>
       </div>
 
-
-      {/* Fordelssektion */}
-      <div className="card" style={{ marginTop: "2rem", backgroundColor: "#f9fafb" }}>
-        <h2 style={{ textAlign: "center", fontSize: "1.5rem", marginBottom: "1rem" }}>
-          Derfor vælger virksomheder Nexpertia
-        </h2>
+      {/* Analyseformular */}
+      <div className="card" style={{ marginBottom: "2rem" }}>
         <div style={{
           display: "flex",
-          flexWrap: "wrap",
-          justifyContent: "space-around",
-          gap: "2rem",
-          marginTop: "1rem",
+          alignItems: "center",
+          gap: "1rem",
+          justifyContent: "center"
         }}>
-          {[
-            {
-              icon: <SearchCheck size={32} strokeWidth={1.8} />,
-              title: "Automatisk analyse",
-              desc: "Identificer GDPR-risici på din hjemmeside uden manuelle tjek.",
-            },
-            {
-              icon: <FileText size={32} strokeWidth={1.8} />,
-              title: "Klar rapport",
-              desc: "Få tydelige anbefalinger og konkrete næste skridt til compliance.",
-            },
-            {
-              icon: <Zap size={32} strokeWidth={1.8} />,
-              title: "Hurtig opsætning",
-              desc: "Indtast din URL og få en rapport på under ét minut.",
-            },
-            {
-              icon: <ShieldCheck size={32} strokeWidth={1.8} />,
-              title: "Datasikkerhed",
-              desc: "Dine oplysninger behandles fortroligt og sikkert.",
-            },
-          ].map(({ icon, title, desc }) => (
-            <div key={title} style={{ maxWidth: "220px", textAlign: "center" }}>
-              <div style={{ marginBottom: "0.5rem", color: "#4F46E5" }}>{icon}</div>
-              <h4 style={{ fontSize: "1.1rem", marginBottom: "0.3rem" }}>{title}</h4>
-              <p style={{ fontSize: "0.95rem", color: "#555" }}>{desc}</p>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="28"
+            height="28"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#2563EB"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <circle cx="12" cy="12" r="10" />
+            <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
+            <path d="M2 12h20" />
+          </svg>
+          <div>
+            <div style={{ fontSize: "1.1rem", fontWeight: 600 }}>
+              Analyse af hjemmeside
             </div>
-          ))}
+          </div>
         </div>
-      </div>
 
-
-      {/* Analyseformular */}  
-      <div className="card" style={{ marginTop: "2rem", maxWidth: "600px", marginInline: "auto" }}>
-        <h3 style={{ marginBottom: "1rem" }}>🔍 Analyser din hjemmeside</h3>
-        <p style={{ marginBottom: "1rem", color: "#555" }}>
-          Indtast en URL og få en automatiseret GDPR-analyse med det samme.
-        </p>
-
-        <div
+        <form
           style={{
+            marginTop: "1rem",
             display: "flex",
             flexDirection: "column",
-            gap: "1rem"
+            alignItems: "center"
+          }}
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleURLAnalyze(); // husk at du skal definere denne
           }}
         >
-          <input
-            type="text"
-            placeholder="https://www.eksempel.dk"
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-            style={{
-              width: "100%",
-              height: "44px",
-              padding: "10px 14px",
-              fontSize: "1rem",
-              borderRadius: "6px",
-              border: "1px solid #ccc"
-            }}
-          />
-
+          <div style={{ width: "100%", maxWidth: "360px" }}>
+            <input
+              type="text"
+              placeholder="https://www.eksempel.dk"
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+              className="form-field"
+              style={{
+                width: "100%",
+                textAlign: "center",
+                marginBottom: "1rem"
+              }}
+            />
+          </div>
           <button
-            onClick={handleAnalyze}
+            type="submit"
+            className="button"
+            style={{ minWidth: "160px", backgroundColor: "#2563EB" }}
             disabled={loading}
-            style={{
-              width: "100%",
-              height: "44px",
-              fontSize: "1rem",
-              fontWeight: "bold",
-              borderRadius: "6px",
-              border: "none",
-              backgroundColor: "#1E3A8A",
-              color: "#fff",
-              cursor: "pointer"
-            }}
           >
-            {loading ? "Analyserer..." : "🔎 Analyser"}
+            {loading ? "Analyserer..." : "Start analyse"}
           </button>
-        </div>
+        </form>
       </div>
-
 
 
       {/* Resultatvisning */}
@@ -163,6 +184,64 @@ const Dashboard = () => {
           <AnalysisResult analysis={analysis} withTitle />
         </div>
       )}
+
+      {/* Hvis analyse har mangler */}
+      {analysis?.missing?.length > 0 && (
+        <div className="card" style={{ marginTop: "2rem" }}>
+          <h3 style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            <AlertCircle size={20} /> Manglende punkter i din analyse
+          </h3>
+          <ul style={{ marginTop: "0.5rem", paddingLeft: "1rem", color: "#B91C1C" }}>
+            {analysis.missing.map((m, i) => (
+              <li key={i}>{m}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* Hvorfor vælge Nexpertia */}
+      <div className="card" style={{ marginTop: "2rem", backgroundColor: "#f9fafb", maxWidth: "960px", marginInline: "auto" }}>
+        <h2 style={{ textAlign: "center", fontSize: "1.5rem", marginBottom: "1rem" }}>
+          Hvorfor bruge Nexpertia?
+        </h2>
+        <div style={{
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: "space-around",
+          gap: "2rem"
+        }}>
+          {[
+            {
+              icon: <SearchCheck size={32} strokeWidth={1.8} />,
+              title: "Automatisk analyse",
+              desc: "Opdag GDPR-risici uden manuelle tjek."
+            },
+            {
+              icon: <FileText size={32} strokeWidth={1.8} />,
+              title: "Klar rapport",
+              desc: "Tydelige anbefalinger og konkrete skridt."
+            },
+            {
+              icon: <Zap size={32} strokeWidth={1.8} />,
+              title: "Hurtig opsætning",
+              desc: "URL + klik = rapport på ét minut."
+            },
+            {
+              icon: <ShieldCheck size={32} strokeWidth={1.8} />,
+              title: "Datasikkerhed",
+              desc: "Fortrolig og sikker behandling af dine data."
+            }
+          ].map(({ icon, title, desc }) => (
+            <div key={title} style={{ maxWidth: "220px", textAlign: "center" }}>
+              <div style={{ marginBottom: "0.5rem", color: "#4F46E5" }}>{icon}</div>
+              <h4>{title}</h4>
+              <p style={{ fontSize: "0.95rem", color: "#555" }}>{desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Link til historik */}
       <div style={{ textAlign: "center", marginTop: "2rem" }}>
         <Link
           to="/politik-historik"
@@ -172,20 +251,14 @@ const Dashboard = () => {
             borderRadius: "8px",
             backgroundColor: "#2563EB",
             color: "#fff",
-            fontWeight: 500,
-            display: "inline-block"
+            fontWeight: 500
           }}
         >
           Se dine tidligere politikker
         </Link>
       </div>
-
     </Layout>
-    
   );
 };
-
-
-
 
 export default Dashboard;

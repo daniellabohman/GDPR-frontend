@@ -1,5 +1,4 @@
 import React from "react";
-import { isAuthenticated } from "./utils/auth";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -14,25 +13,20 @@ import BlogPost from "./pages/BlogPost";
 import AIGenerator from "./pages/AIGenerator";
 import BlogAdminPanel from "./pages/Admin";
 import BlogEdit from "./pages/BlogEdit";
-
+import Landing from "./pages/Landing";
 
 const App = () => {
   return (
     <Router>
       <Routes>
-        {/* Default route: redirect til dashboard hvis logget ind */}
-        <Route
-          path="/"
-          element={
-            isAuthenticated()
-              ? <Navigate to="/dashboard" />
-              : <Navigate to="/login" />
-          }
-        />
-
+        {/* Public routes */}
+        <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/blog" element={<BlogList />} />
+        <Route path="/blog/:slug" element={<BlogPost />} />
 
+        {/* Protected routes */}
         <Route
           path="/dashboard"
           element={
@@ -41,7 +35,6 @@ const App = () => {
             </PrivateRoute>
           }
         />
-
         <Route
           path="/profile"
           element={
@@ -50,8 +43,6 @@ const App = () => {
             </PrivateRoute>
           }
         />
-
-        {/* Policy routes */}
         <Route
           path="/policy/:policyId"
           element={
@@ -61,7 +52,6 @@ const App = () => {
           }
         />
         <Route path="/politik-historik" element={<PolicyHistory />} />
-
         <Route
           path="/analyser"
           element={
@@ -78,33 +68,25 @@ const App = () => {
             </PrivateRoute>
           }
         />
+        <Route
+          path="/admin"
+          element={
+            <PrivateRoute adminOnly={true}>
+              <BlogAdminPanel />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/admin/blog/:slug/edit"
+          element={
+            <PrivateRoute adminOnly={true}>
+              <BlogEdit />
+            </PrivateRoute>
+          }
+        />
 
-
-      <Route path="/blog" element={<BlogList />} />
-      <Route path="/blog/:slug" element={<BlogPost />} />
-
-      
-      <Route
-        path="/admin"
-        element={
-          <PrivateRoute adminOnly={true}>
-            <BlogAdminPanel />
-          </PrivateRoute>
-        }
-      />
-
-      <Route
-        path="/admin/blog/:slug/edit"
-        element={
-          <PrivateRoute adminOnly={true}>
-            <BlogEdit />
-          </PrivateRoute>
-        }
-      />
-
-
-        {/* Catch-all til 404 eller redirect */}
-        <Route path="*" element={<Navigate to="/dashboard" />} />
+        {/* Fallback */}
+        <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>
   );

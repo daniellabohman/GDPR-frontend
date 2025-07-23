@@ -1,7 +1,6 @@
-// src/components/ProfileForm.jsx
 import React, { useState, useEffect } from "react";
 import axios from "../utils/axiosInstance";
-import "../styles/privacyform.css";
+import "../styles/global.css";
 
 const ProfileForm = () => {
   const [form, setForm] = useState({
@@ -13,7 +12,6 @@ const ProfileForm = () => {
 
   const [loading, setLoading] = useState(false);
 
-  // Hent eksisterende brugerdata
   useEffect(() => {
     const fetchProfile = async () => {
       try {
@@ -61,6 +59,7 @@ const ProfileForm = () => {
             value={form.company_name}
             onChange={handleChange}
             required
+            className="form-field"
           />
           <input
             name="website_url"
@@ -68,6 +67,7 @@ const ProfileForm = () => {
             placeholder="Website (https://...)"
             value={form.website_url}
             onChange={handleChange}
+            className="form-field"
           />
           <input
             name="cvr"
@@ -75,6 +75,7 @@ const ProfileForm = () => {
             placeholder="CVR-nummer"
             value={form.cvr}
             onChange={handleChange}
+            className="form-field"
           />
           <input
             name="contact_email"
@@ -82,9 +83,10 @@ const ProfileForm = () => {
             placeholder="Kontakt-e-mail"
             value={form.contact_email}
             onChange={handleChange}
+            className="form-field"
           />
 
-          <button type="submit" disabled={loading}>
+          <button type="submit" className="button" disabled={loading}>
             {loading ? "Gemmer..." : "Gem ændringer"}
           </button>
         </form>

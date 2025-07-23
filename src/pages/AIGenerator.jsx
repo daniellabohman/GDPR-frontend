@@ -30,7 +30,8 @@ const AIGenerator = () => {
     databehandlere: "",
     opbevaringsperiode: "",
     målgruppe: "",
-    særlige_hensyn: ""
+    særlige_hensyn: "",
+    fritekst_beskrivelse: ""
   });
 
   const [generatedHtml, setGeneratedHtml] = useState(null);
@@ -64,9 +65,7 @@ const AIGenerator = () => {
       const token = localStorage.getItem("token");
       const response = await axios.get(`/gdpr/policy/${generatedId}/pdf`, {
         responseType: "blob",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
         withCredentials: true,
       });
 
@@ -84,158 +83,86 @@ const AIGenerator = () => {
     }
   };
 
+  const exampleSuggestions = {
+    trackingværktøjer: ["Google Analytics", "Meta Pixel"],
+    databehandlere: ["Mailchimp", "Stripe"],
+    opbevaringsperiode: ["12 måneder", "24 måneder"]
+  };
+
   return (
     <Layout>
-    <div className="policy-form-container">
-      <div className="policy-form-card">
-        <h2 style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-          <ShieldCheck size={20} /> Generér GDPR-dokument
-        </h2>
+      <div className="policy-form-container">
+        <div className="policy-form-card">
+          <h2 style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            <ShieldCheck size={20} /> Generér GDPR-dokument
+          </h2>
 
-        <form onSubmit={handleSubmit} className="policy-form">
-          <input
-            className="form-field"
-            name="virksomhed_navn"
-            type="text"
-            placeholder="Virksomhedsnavn"
-            value={form.virksomhed_navn}
-            onChange={handleChange}
-            required
-          />
-          <input
-            className="form-field"
-            name="email"
-            type="email"
-            placeholder="Kontakt-e-mail"
-            value={form.email}
-            onChange={handleChange}
-            required
-          />
-          <input
-            className="form-field"
-            name="lokation"
-            type="text"
-            placeholder="Lokation (by, land)"
-            value={form.lokation}
-            onChange={handleChange}
-          />
-          <input
-            className="form-field"
-            name="branche"
-            type="text"
-            placeholder="Branche"
-            value={form.branche}
-            onChange={handleChange}
-          />
-          <input
-            className="form-field"
-            name="brugertyper"
-            type="text"
-            placeholder="Brugertyper (fx privatkunder, erhverv)"
-            value={form.brugertyper}
-            onChange={handleChange}
-          />
-          <input
-            className="form-field"
-            name="målgruppe"
-            type="text"
-            placeholder="Primær målgruppe (fx danske brugere, EU)"
-            value={form.målgruppe}
-            onChange={handleChange}
-          />
+          <form onSubmit={handleSubmit} className="policy-form">
+            <textarea
+              className="form-field"
+              name="fritekst_beskrivelse"
+              placeholder="Skriv en kort beskrivelse af din virksomhed, fx: 'Vi er en webshop med kontaktformular og nyhedsbrev'"
+              value={form.fritekst_beskrivelse}
+              onChange={handleChange}
+              rows={3}
+            />
 
-          <textarea
-            className="form-field"
-            name="trackingværktøjer"
-            placeholder="Hvilke trackingværktøjer bruges? (fx Google Analytics, Meta Pixel)"
-            value={form.trackingværktøjer}
-            onChange={handleChange}
-          />
-          <textarea
-            className="form-field"
-            name="databehandlere"
-            placeholder="Nævn eksterne databehandlere (fx Mailchimp, Stripe)"
-            value={form.databehandlere}
-            onChange={handleChange}
-          />
-          <textarea
-            className="form-field"
-            name="opbevaringsperiode"
-            placeholder="Hvor længe opbevares data typisk? (fx 12 mdr)"
-            value={form.opbevaringsperiode}
-            onChange={handleChange}
-          />
-          <textarea
-            className="form-field"
-            name="særlige_hensyn"
-            placeholder="Evt. særlige forhold (fx følsomme data, børn)"
-            value={form.særlige_hensyn}
-            onChange={handleChange}
-          />
+            <input className="form-field" name="virksomhed_navn" type="text" placeholder="Virksomhedsnavn" value={form.virksomhed_navn} onChange={handleChange} required />
+            <input className="form-field" name="email" type="email" placeholder="Kontakt-e-mail" value={form.email} onChange={handleChange} required />
+            <input className="form-field" name="lokation" type="text" placeholder="Lokation (by, land)" value={form.lokation} onChange={handleChange} />
+            <input className="form-field" name="branche" type="text" placeholder="Branche" value={form.branche} onChange={handleChange} />
+            <input className="form-field" name="brugertyper" type="text" placeholder="Brugertyper (fx privatkunder, erhverv)" value={form.brugertyper} onChange={handleChange} />
+            <input className="form-field" name="målgruppe" type="text" placeholder="Primær målgruppe (fx danske brugere, EU)" value={form.målgruppe} onChange={handleChange} />
 
-          <div className="policy-checkboxes">
-            <label>
-              <input
-                type="checkbox"
-                name="kontaktformular"
-                checked={form.kontaktformular}
-                onChange={handleChange}
-              />
-              Kontaktformular
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                name="nyhedsbrev"
-                checked={form.nyhedsbrev}
-                onChange={handleChange}
-              />
-              Nyhedsbrev
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                name="webshop"
-                checked={form.webshop}
-                onChange={handleChange}
-              />
-              Webshop
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                name="cookies"
-                checked={form.cookies}
-                onChange={handleChange}
-              />
-              3rd-party cookies
-            </label>
-          </div>
+            <textarea className="form-field" name="trackingværktøjer" placeholder="Hvilke trackingværktøjer bruges? (fx Google Analytics, Meta Pixel)" value={form.trackingværktøjer} onChange={handleChange} />
+            <div className="suggestions">
+              {exampleSuggestions.trackingværktøjer.map((s, i) => (
+                <span key={i} className="suggestion-chip" onClick={() => setForm({ ...form, trackingværktøjer: s })}>{s}</span>
+              ))}
+            </div>
 
-          <button type="submit" disabled={loading}>
-            {loading ? "Genererer..." : "Generér politik"}
-          </button>
-        </form>
-      </div>
+            <textarea className="form-field" name="databehandlere" placeholder="Nævn eksterne databehandlere (fx Mailchimp, Stripe)" value={form.databehandlere} onChange={handleChange} />
+            <div className="suggestions">
+              {exampleSuggestions.databehandlere.map((s, i) => (
+                <span key={i} className="suggestion-chip" onClick={() => setForm({ ...form, databehandlere: s })}>{s}</span>
+              ))}
+            </div>
 
-      {generatedHtml && (
-        <div className="policy-form-card" style={{ marginTop: "2rem" }}>
-          <h3>Din politik</h3>
-          <div dangerouslySetInnerHTML={{ __html: generatedHtml }} />
+            <textarea className="form-field" name="opbevaringsperiode" placeholder="Hvor længe opbevares data typisk? (fx 12 mdr)" value={form.opbevaringsperiode} onChange={handleChange} />
+            <div className="suggestions">
+              {exampleSuggestions.opbevaringsperiode.map((s, i) => (
+                <span key={i} className="suggestion-chip" onClick={() => setForm({ ...form, opbevaringsperiode: s })}>{s}</span>
+              ))}
+            </div>
 
-          {generatedId && (
-            <button
-              onClick={handleDownload}
-              className="download-btn"
-              style={{ marginTop: "1rem" }}
-            >
-              <Download size={16} style={{ marginRight: 6, verticalAlign: "middle" }} />
-              Download som PDF
+            <textarea className="form-field" name="særlige_hensyn" placeholder="Evt. særlige forhold (fx følsomme data, børn)" value={form.særlige_hensyn} onChange={handleChange} />
+
+            <div className="policy-checkboxes">
+              <label><input type="checkbox" name="kontaktformular" checked={form.kontaktformular} onChange={handleChange} /> Kontaktformular</label>
+              <label><input type="checkbox" name="nyhedsbrev" checked={form.nyhedsbrev} onChange={handleChange} /> Nyhedsbrev</label>
+              <label><input type="checkbox" name="webshop" checked={form.webshop} onChange={handleChange} /> Webshop</label>
+              <label><input type="checkbox" name="cookies" checked={form.cookies} onChange={handleChange} /> 3rd-party cookies</label>
+            </div>
+
+            <button type="submit" disabled={loading}>
+              {loading ? "Genererer..." : "Generér politik"}
             </button>
-          )}
+          </form>
         </div>
-      )}
-    </div>
+
+        {generatedHtml && (
+          <div className="policy-form-card" style={{ marginTop: "2rem" }}>
+            <h3>Din politik</h3>
+            <div dangerouslySetInnerHTML={{ __html: generatedHtml }} />
+            {generatedId && (
+              <button onClick={handleDownload} className="download-btn" style={{ marginTop: "1rem" }}>
+                <Download size={16} style={{ marginRight: 6, verticalAlign: "middle" }} />
+                Download som PDF
+              </button>
+            )}
+          </div>
+        )}
+      </div>
     </Layout>
   );
 };
