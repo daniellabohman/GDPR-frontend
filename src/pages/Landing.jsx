@@ -1,12 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { isAuthenticated } from "../utils/auth";
 import { ShieldCheck, SearchCheck, FileText, Zap, Lock } from "lucide-react";
 import Layout from "../components/Layout";
 import "../styles/global.css";
-import { useState } from "react";
-import axios from "../utils/axiosInstance"; // brug din instance med baseURL
-
+import axios from "../utils/axiosInstance";
 
 const Landing = () => {
   const [url, setUrl] = useState("");
@@ -23,6 +21,7 @@ const Landing = () => {
 
   return (
     <Layout>
+      {/* Hero */}
       <div className="card" style={{ textAlign: "center", padding: "3rem" }}>
         <ShieldCheck size={40} color="#2563EB" style={{ marginBottom: "1rem" }} />
         <h1 style={{ fontSize: "2rem", marginBottom: "1rem" }}>
@@ -32,14 +31,20 @@ const Landing = () => {
           Nexpertia hjælper dig med at analysere, forbedre og sikre din online tilstedeværelse – automatisk, præcist og uden kompleksitet.
         </p>
         <Link to="/login">
-          <button style={{ marginTop: "2rem" }}>
-            🚀 Kom i gang gratis
-          </button>
+          <button style={{ marginTop: "2rem" }}>🚀 Kom i gang gratis</button>
         </Link>
       </div>
+
+      {/* Analysefelt */}
       <div className="card" style={{ marginTop: "2rem", maxWidth: "600px", marginInline: "auto", textAlign: "center" }}>
-        <h3 style={{ marginBottom: "1rem" }}> Tjek din hjemmeside gratis</h3>
-        <p style={{ marginBottom: "1rem", color: "#555" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "1rem", justifyContent: "center" }}>
+          <SearchCheck size={28} stroke="#2563EB" />
+          <div>
+            <div style={{ fontSize: "1.1rem", fontWeight: 600 }}>Tjek din hjemmeside gratis</div>
+          </div>
+        </div>
+
+        <p style={{ marginTop: "0.5rem", color: "#555" }}>
           Indtast din URL for at se om du overholder GDPR – helt uden login.
         </p>
 
@@ -49,51 +54,60 @@ const Landing = () => {
             if (!url) return alert("Indtast en URL");
             setLoading(true);
             try {
-              const res = await axios.post("/gdpr/analyze", { url });
+              const res = await axios.post("/gdpr/analyze-demo", { url });
               setAnalysis(res.data);
               localStorage.setItem("latestAnalysis", JSON.stringify({ url, analysis: res.data }));
-
             } catch {
               alert("Analyse fejlede. Prøv igen.");
             } finally {
               setLoading(false);
             }
           }}
-          style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
+          style={{ marginTop: "1rem", display: "flex", flexDirection: "column", alignItems: "center" }}
         >
-          <input
-            type="text"
-            placeholder="https://www.eksempel.dk"
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-            style={{
-              width: "100%",
-              padding: "10px 14px",
-              fontSize: "1rem",
-              borderRadius: "6px",
-              border: "1px solid #ccc"
-            }}
-          />
-          <button type="submit" disabled={loading}>
-            {loading ? "Analyserer..." : "🔎 Tjek nu"}
+          <div style={{ width: "100%", maxWidth: "360px" }}>
+            <input
+              type="text"
+              placeholder="https://www.eksempel.dk"
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+              className="form-field"
+              style={{
+                width: "100%",
+                textAlign: "center",
+                padding: "10px 14px",
+                fontSize: "1rem",
+                borderRadius: "6px",
+                border: "1px solid #ccc",
+                marginBottom: "1rem"
+              }}
+            />
+          </div>
+          <button
+            type="submit"
+            className="button"
+            style={{ minWidth: "160px", backgroundColor: "#2563EB", color: "#fff" }}
+            disabled={loading}
+          >
+            {loading ? "Analyserer..." : "Tjek nu"}
           </button>
         </form>
 
         {analysis && (
           <div style={{
-              marginTop: "1.5rem",
-              padding: "0.5rem 1rem",
-              backgroundColor: "#F0FDF4",
-              color: "#15803D",
-              borderRadius: "8px",
-              fontWeight: "bold"
-            }}>
-              ✅ Din compliance score: {analysis.score}%
-            </div>
+            marginTop: "1.5rem",
+            padding: "0.5rem 1rem",
+            backgroundColor: "#F0FDF4",
+            color: "#15803D",
+            borderRadius: "8px",
+            fontWeight: "bold"
+          }}>
+            ✅ Din compliance score: {analysis.score}%
+          </div>
         )}
       </div>
 
-
+      {/* Hvorfor vælge Nexpertia */}
       <div className="card" style={{ marginTop: "2rem", backgroundColor: "#f9fafb" }}>
         <h2 style={{ textAlign: "center", fontSize: "1.5rem", marginBottom: "1rem" }}>
           Hvorfor vælge Nexpertia?

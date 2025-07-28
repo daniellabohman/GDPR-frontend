@@ -67,10 +67,11 @@ const Layout = ({ children }) => {
                     <ShieldCheck size={16} style={{ marginRight: 6 }} />
                     GDPR-analyse
                   </Link>
-                  <Link to="/privatlivspolitik" className={isActive("/AIGenerator") ? "active" : ""}>
+                  <Link to="/ai-generator" className={isActive("/ai-generator") ? "active" : ""}>
                     <FileText size={16} style={{ marginRight: 6 }} />
                     Privatlivspolitik
                   </Link>
+
                   <Link to="/politik-historik" className={isActive("/politik-historik") ? "active" : ""}>
                     <History size={16} style={{ marginRight: 6 }} />
                     Historik

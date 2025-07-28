@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "../utils/axiosInstance";
 import Layout from "../components/Layout";
+import { useEffect } from "react";
 
 import "../styles/privacyform.css";
 import {
@@ -14,6 +15,18 @@ import {
   Download,
   ShieldCheck
 } from "lucide-react";
+
+const mapMissingToForm = (missing = []) => {
+  return {
+    kontaktformular: missing.includes("Kontaktformular"),
+    nyhedsbrev: missing.includes("Nyhedsbrev"),
+    webshop: missing.includes("Webshop"),
+    cookies: missing.includes("Cookiepolitik"),
+    trackingværktøjer: missing.includes("Cookiepolitik") ? "Google Analytics" : "",
+    fritekst_beskrivelse: "Baseret på analyse – følgende områder var utilstrækkelige: " + missing.join(", ")
+  };
+};
+
 
 const AIGenerator = () => {
   const [form, setForm] = useState({
@@ -37,6 +50,30 @@ const AIGenerator = () => {
   const [generatedHtml, setGeneratedHtml] = useState(null);
   const [generatedId, setGeneratedId] = useState(null);
   const [loading, setLoading] = useState(false);
+
+
+useEffect(() => {
+  const saved = sessionStorage.getItem("prefill_analysis");
+  if (!saved) return;
+
+  const { type, data } = JSON.parse(saved);
+
+  if (type === "url") {
+    const updates = mapMissingToForm(data.missing);
+    setForm((prev) => ({ ...prev, ...updates }));
+  }
+
+  if (type === "text") {
+    setForm((prev) => ({
+      ...prev,
+      fritekst_beskrivelse: data,
+    }));
+  }
+
+  sessionStorage.removeItem("prefill_analysis");
+}, []);
+
+
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;

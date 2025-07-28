@@ -18,6 +18,10 @@ const Dashboard = () => {
   const [analysis, setAnalysis] = useState(null);
   const [loading, setLoading] = useState(false);
   const [averageScore, setAverageScore] = useState(null);
+  const [showIntro, setShowIntro] = useState(() => {
+    return localStorage.getItem("firstLogin") === "true";
+  });
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -67,8 +71,44 @@ const Dashboard = () => {
 
   return (
     <Layout>
+      
+      {showIntro && (
+        <div className="card" style={{ marginBottom: "2rem" }}>
+          <h2 style={{ fontSize: "1.3rem", marginBottom: "1rem" }}>🚀 Kom godt i gang</h2>
+          <ol style={{ lineHeight: 1.8, paddingLeft: "1.2rem" }}>
+            <li>
+              <strong>Trin 1:</strong> <Link to="/analyser">Analyser din hjemmeside</Link>
+            </li>
+            <li>
+              <strong>Trin 2:</strong> <Link to="/ai-generator">Generér en privatlivspolitik</Link>
+            </li>
+            <li>
+              <strong>Trin 3:</strong> Download din politik som PDF
+            </li>
+            <li>
+              <strong>Trin 4:</strong> <Link to="/blog">Se nyeste GDPR-ændringer</Link>
+            </li>
+          </ol>
+          <button
+            onClick={() => {
+              setShowIntro(false);
+              localStorage.setItem("firstLogin", "false");
+            }}
+            style={{
+              marginTop: "1rem",
+              padding: "10px 16px",
+              backgroundColor: "#2563EB",
+              color: "white",
+              border: "none",
+              borderRadius: "8px",
+              fontWeight: 500
+            }}
+          >
+            ✅ Forstået – vis mig ikke igen
+          </button>
+        </div>
+      )}
 
-      {/* Compliance score */}
       {averageScore !== null && (
         <div className="card" style={{ marginBottom: "2rem", textAlign: "center" }}>
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "1rem" }}>
@@ -100,7 +140,6 @@ const Dashboard = () => {
         </div>
       )}
 
-      {/* Hero / intro */}
       <div className="card" style={{ textAlign: "center", padding: "2.5rem" }}>
         <h1 style={{ fontSize: "2rem", marginBottom: "1rem" }}>
           Gør din hjemmeside GDPR-kompatibel
@@ -110,7 +149,6 @@ const Dashboard = () => {
         </p>
       </div>
 
-      {/* Analyseformular */}
       <div className="card" style={{ marginBottom: "2rem" }}>
         <div style={{
           display: "flex",
@@ -118,25 +156,9 @@ const Dashboard = () => {
           gap: "1rem",
           justifyContent: "center"
         }}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="28"
-            height="28"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#2563EB"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <circle cx="12" cy="12" r="10" />
-            <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
-            <path d="M2 12h20" />
-          </svg>
-          <div>
-            <div style={{ fontSize: "1.1rem", fontWeight: 600 }}>
-              Analyse af hjemmeside
-            </div>
+          <ShieldCheck size={28} stroke="#2563EB" />
+          <div style={{ fontSize: "1.1rem", fontWeight: 600 }}>
+            Analyse af hjemmeside
           </div>
         </div>
 
@@ -149,7 +171,7 @@ const Dashboard = () => {
           }}
           onSubmit={(e) => {
             e.preventDefault();
-            handleURLAnalyze(); // husk at du skal definere denne
+            handleAnalyze();
           }}
         >
           <div style={{ width: "100%", maxWidth: "360px" }}>
@@ -177,15 +199,12 @@ const Dashboard = () => {
         </form>
       </div>
 
-
-      {/* Resultatvisning */}
       {analysis && (
         <div className="analysis-layout">
           <AnalysisResult analysis={analysis} withTitle />
         </div>
       )}
 
-      {/* Hvis analyse har mangler */}
       {analysis?.missing?.length > 0 && (
         <div className="card" style={{ marginTop: "2rem" }}>
           <h3 style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
@@ -199,7 +218,6 @@ const Dashboard = () => {
         </div>
       )}
 
-      {/* Hvorfor vælge Nexpertia */}
       <div className="card" style={{ marginTop: "2rem", backgroundColor: "#f9fafb", maxWidth: "960px", marginInline: "auto" }}>
         <h2 style={{ textAlign: "center", fontSize: "1.5rem", marginBottom: "1rem" }}>
           Hvorfor bruge Nexpertia?
@@ -241,7 +259,6 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Link til historik */}
       <div style={{ textAlign: "center", marginTop: "2rem" }}>
         <Link
           to="/politik-historik"

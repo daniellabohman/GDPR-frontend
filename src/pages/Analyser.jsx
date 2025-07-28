@@ -155,51 +155,65 @@ const Analyser = () => {
         {(analysis || textAnalysis) && (
           <div ref={resultRef} className="policy-form-card" style={{ marginTop: "2rem" }}>
             {analysis && (
-              <>
-                <h3>Resultat af URL-analyse</h3>
-                <p>
-                  <strong>Compliance Score:</strong>
-                  <span
-                    className={`score-badge ${
-                      analysis.score >= 90 ? "score-good" :
-                      analysis.score >= 70 ? "score-medium" :
-                      "score-bad"
-                    }`}
+  <>
+              <h3>Resultat af URL-analyse</h3>
+              <p>
+                <strong>Compliance Score:</strong>
+                <span className={`score-badge ${
+                  analysis.score >= 90 ? "score-good" :
+                  analysis.score >= 70 ? "score-medium" :
+                  "score-bad"
+                }`}>
+                  {analysis.score}%
+                </span>
+              </p>
+              <p style={{ marginTop: "0.5rem" }}>
+                {analysis.missing?.length > 0
+                  ? "Mangler: " + analysis.missing.join(", ")
+                  : "Ingen større problemer fundet"}
+              </p>
+              {analysis.suggestions?.length > 0 && (
+                <>
+                  <p style={{ marginTop: "1rem", fontWeight: 600 }}>Forslag til forbedring:</p>
+                  <ul className="list-disc pl-6 mt-2">
+                    {analysis.suggestions.map((s, i) => (
+                      <li key={i}>{s}</li>
+                    ))}
+                  </ul>
+                  <Link
+                    to="/ai-generator"
+                    className="button mt-4 full-width text-center"
+                    onClick={() => {
+                      sessionStorage.setItem("prefill_analysis", JSON.stringify({ type: "url", data: analysis }));
+                    }}
                   >
-                    {analysis.score}%
-                  </span>
-                </p>
-                <p style={{ marginTop: "0.5rem" }}>
-                  {analysis.missing?.length > 0
-                    ? "Mangler: " + analysis.missing.join(", ")
-                    : "Ingen større problemer fundet"}
-                </p>
-                {analysis.suggestions?.length > 0 && (
-                  <>
-                    <p style={{ marginTop: "1rem", fontWeight: 600 }}>Forslag til forbedring:</p>
-                    <ul className="list-disc pl-6 mt-2">
-                      {analysis.suggestions.map((s, i) => (
-                        <li key={i}>{s}</li>
-                      ))}
-                    </ul>
-                    <Link to="/ai-generator" className="button mt-4 full-width text-center">Forbedr politik med AI</Link>
-                    <Link to="/ai-generator" className="button mt-2 full-width text-center">Generér privatlivspolitik baseret på analysen</Link>
-                  </>
-                )}
-              </>
-            )}
-            {textAnalysis && (
-              <>
-                <h3>Analyse af politiktekst</h3>
-                <ul className="list-disc pl-6">
-                  {textAnalysis.recommendations.map((rec, i) => (
-                    <li key={i}>{rec}</li>
-                  ))}
-                </ul>
-                <Link to="/ai-generator" className="button mt-4 full-width text-center">Generér privatlivspolitik baseret på analysen</Link>
-                <Link to="/ai-generator" className="button mt-4 full-width text-center">Forbedr min politik med AI</Link>
-              </>
-            )}
+                    Generér privatlivspolitik baseret på analysen
+                  </Link>
+                </>
+              )}
+            </>
+          )}
+
+          {textAnalysis && (
+            <>
+              <h3>Analyse af politiktekst</h3>
+              <ul className="list-disc pl-6">
+                {textAnalysis.recommendations.map((rec, i) => (
+                  <li key={i}>{rec}</li>
+                ))}
+              </ul>
+              <Link
+                to="/ai-generator"
+                className="button mt-4 full-width text-center"
+                onClick={() => {
+                  sessionStorage.setItem("prefill_analysis", JSON.stringify({ type: "text", data: policyText }));
+                }}
+              >
+                Forbedr min politik med AI
+              </Link>
+            </>
+          )}
+
           </div>
         )}
       </div>
